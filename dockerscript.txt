@@ -1,0 +1,29 @@
+<docker.image.prefix>caprepo</docker.image.prefix>
+
+
+<plugin> 
+	<groupId>com.spotify</groupId> 
+	<artifactId>docker-maven-plugin</artifactId> 
+	<version>0.4.11</version> 
+		<configuration> 
+			<imageName>${docker.image.prefix}/${project.artifactId}</imageName> 
+			<dockerDirectory>src/main/docker</dockerDirectory> 
+				<resources> 
+					<resource>
+					<targetPath>/</targetPath> 
+					<directory>${project.build.directory}</directory> 
+					<include>${project.build.finalName}.jar</include> 
+					</resource> 
+				</resources> 
+		</configuration> 
+</plugin>
+
+
+Dockerfile
+==========
+FROM frolvlad/alpine-oraclejdk8:slim
+VOLUME /tmp
+ADD hello-world-0.0.1-SNAPSHOT.jar app.jar
+RUN sh -c 'touch /app.jar'
+ENV JAVA_OPTS=""
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
